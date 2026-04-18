@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Datasets
+datasets/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+
+# Runs / Logs
+runs/
+logs/
+*.log
+wandb/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large files
+*.docx
+*.doc
+*.pdf
+*.zip
+*.tar.gz
+
+# Figures
+图/
+
+# Temporary / remote scripts
+check_server.py
+debug_remote.py
+deploy_remote.py
+remote_run_check.py
+remote_test_runner.py
+remote_train_test.py
+
+# Notes (keep README.md)
+版本*.md
+计划.md
+运行.md
+

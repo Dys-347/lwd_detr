@@ -1,0 +1,36 @@
+nc: 5
+scales:
+  lwd: [1.00, 0.45, 1024]
+
+backbone:
+  - [-1, 1, PCIRLayer, [3, 64, 1, True, 1, 1]]
+  - [-1, 1, PCIRLayer, [64, 64, 1, False, 2, 1]]
+  - [-1, 1, PCIRLayer, [64, 128, 2, False, 2, 1]]
+  - [-1, 1, PCIRLayer, [128, 256, 2, False, 2, 1]]
+  - [-1, 1, PCIRLayer, [256, 512, 2, False, 2, 1]]
+
+head:
+  - [-1, 1, Conv, [256, 1, 1, None, 1, 1, False]]
+  - [-1, 1, AIFI, [1024, 8]]
+  - [-1, 1, Conv, [256, 1, 1]]
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [3, 1, Conv, [256, 1, 1, None, 1, 1, False]]
+  - [[-2, -1], 1, Concat, [1]]
+  - [-1, 3, DRBC3, [256]]
+  - [-1, 1, Conv, [256, 1, 1]]
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [2, 1, Conv, [256, 1, 1, None, 1, 1, False]]
+  - [[-2, -1], 1, Concat, [1]]
+  - [-1, 3, DRBC3, [256]]
+
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 12], 1, Concat, [1]]
+  - [-1, 3, DRBC3, [256]]
+
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 7], 1, Concat, [1]]
+  - [-1, 3, DRBC3, [256]]
+
+  - [[16, 19, 22], 1, RTDETRDecoder, [nc]]

@@ -1,0 +1,12 @@
+path: ./datasets/strain_clamp
+
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: normal_compression
+  1: groove_under_compression
+  2: steel_anchor_bending
+  3: steel_anchor_burr
+  4: aluminum_strand_loosening
