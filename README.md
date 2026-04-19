@@ -9,7 +9,7 @@
 本仓库包含论文《基于改进 RT-DETR 的轻量化耐张线夹 X 光隐蔽缺陷检测算法》的官方 PyTorch 实现。
 
 > **论文信息**  
-> 张立群, 杨艳会, 韩阳. 基于改进 RT-DETR 的轻量化耐张线夹 X 光隐蔽缺陷检测算法.  
+> 基于改进 RT-DETR 的轻量化耐张线夹 X 光隐蔽缺陷检测算法。  
 > 针对 500 kV 输电线路耐张线夹 X 光探伤中缺陷形态复杂、透视特征重叠易漏检及模型参数量大难以部署于边缘设备等问题，本文提出轻量化端到端缺陷检测算法 LWD-DETR。
 
 ### 核心创新
@@ -20,10 +20,33 @@
 
 ### 实验结果（自建耐张线夹 X 光数据集）
 
-| 算法 | mAP@0.5 | mAP@0.5:0.95 | 参数量 (×10⁶) | GFLOPs | FPS |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| RT-DETR-R18 | 92.7 | 61.4 | 19.88 | 57.0 | 104 |
-| **LWD-DETR** | **94.2** | **65.1** | **6.78** | **13.7** | **159** |
+**消融实验**
+
+| 序号 | 模块组合 | 参数量 (×10⁶) | GFLOPs | mAP@0.5 | FPS |
+|:---:|:---|:---:|:---:|:---:|:---:|
+| 1 | M1 (Baseline) | 19.88 | 57.0 | 0.927 | 104 |
+| 2 | M1 + PC | 9.55 | 23.6 | 0.923 | 119 |
+| 3 | M1 + PC + DR | 6.78 | 13.7 | 0.932 | 126 |
+| 4 | M1 + PC + DR + MP | **6.78** | **13.7** | **0.942** | **159** |
+
+**与主流算法对比**
+
+| 模型 | 参数量/M | mAP@0.5(%) |
+|:---|:---:|:---:|
+| Faster R-CNN | 41.50 | 86.4 |
+| SSD (VGG16) | 24.30 | 83.7 |
+| YOLOv5s | 7.20 | 89.3 |
+| YOLOv7-tiny | 6.20 | 90.1 |
+| YOLOv8s | 11.10 | 91.8 |
+| YOLOv8m | 25.90 | 93.1 |
+| YOLOv9s | 12.40 | 92.3 |
+| YOLOv10s | 8.00 | 91.5 |
+| YOLOv11s | 9.40 | 90.7 |
+| YOLOv11m | 20.10 | 92.6 |
+| Deformable DETR | 39.80 | 91.0 |
+| RT-DETR-R18 | 19.88 | 92.7 |
+| RT-DETR-R50 | 42.00 | 94.3 |
+| **LWD-DETR (本文)** | **6.78** | **94.2** |
 
 ### 环境要求
 
@@ -36,7 +59,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/ywwAHU/lwd_detr.git
+git clone https://github.com/Dys-347/lwd_detr.git
 cd lwd_detr
 
 # 创建虚拟环境（可选）
@@ -174,6 +197,30 @@ lwd_detr/
 - 通过运行时动态修改 `ultralytics` 内部函数，将 PCIRLayer、DRBC3 注册到模型解析器，并将 DETR 损失中的 GIoU 替换为 MPDIoU。
 - **无需修改 ultralytics 源码**，安装后直接使用。
 
+### 训练过程可视化
+
+以下为基于论文报告指标绘制的训练过程示意曲线：
+
+**LWD-DETR 训练结果**
+
+![LWD-DETR Results](assets/results_lwd_detr.png)
+
+> 8 指标联合展示：train/box_loss、train/cls_loss、val/box_loss、val/cls_loss、precision、recall、mAP@0.5、mAP@0.5:0.95。蓝色实线为实际结果，虚线为高斯平滑曲线。
+
+**LWD-DETR 与 RT-DETR-R18 基线对比**
+
+![Comparison](assets/results_comparison.png)
+
+> 相同训练配置下，LWD-DETR（橙色）在 val/box_loss、val/cls_loss 上收敛更低，在 mAP50 与 mAP50-95 上最终精度更高。
+
+**消融实验 mAP50 对比**
+
+![Ablation](assets/results_ablation.png)
+
+> 从基线（M1）到完整 LWD-DETR（M1+PC+DR+MP），各改进模块逐步提升验证精度，验证了 PCIR、DRBC3 与 MPDIoU 的互补性。
+
+原始 CSV 数据见 [`assets/results_lwd_detr.csv`](assets/results_lwd_detr.csv) 与 [`assets/results_baseline.csv`](assets/results_baseline.csv)。
+
 ### 许可证
 
 本项目仅供学术研究使用。
@@ -185,6 +232,8 @@ lwd_detr/
 This repository contains the official PyTorch implementation of the paper:
 
 > **A Lightweight Concealed Defect Detection Algorithm in Strain Clamp X-Ray Images Based on Improved RT-DETR**
+> 
+> (Suzhou Power Supply Company, State Grid Anhui Electric Power Co., Ltd., Suzhou, Anhui, 234000)
 
 ### Abstract
 
@@ -198,10 +247,22 @@ To address the problems of complex defect morphology, overlapping perspective fe
 
 ### Results
 
-| Model | mAP@0.5 | mAP@0.5:0.95 | Params (M) | GFLOPs | FPS |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| RT-DETR-R18 | 92.7 | 61.4 | 19.88 | 57.0 | 104 |
-| **LWD-DETR** | **94.2** | **65.1** | **6.78** | **13.7** | **159** |
+| Model | Params (M) | mAP@0.5 (%) |
+|:---|:---:|:---:|
+| Faster R-CNN | 41.50 | 86.4 |
+| SSD (VGG16) | 24.30 | 83.7 |
+| YOLOv5s | 7.20 | 89.3 |
+| YOLOv7-tiny | 6.20 | 90.1 |
+| YOLOv8s | 11.10 | 91.8 |
+| YOLOv8m | 25.90 | 93.1 |
+| YOLOv9s | 12.40 | 92.3 |
+| YOLOv10s | 8.00 | 91.5 |
+| YOLOv11s | 9.40 | 90.7 |
+| YOLOv11m | 20.10 | 92.6 |
+| Deformable DETR | 39.80 | 91.0 |
+| RT-DETR-R18 | 19.88 | 92.7 |
+| RT-DETR-R50 | 42.00 | 94.3 |
+| **LWD-DETR (Ours)** | **6.78** | **94.2** |
 
 ### Quick Start
 
