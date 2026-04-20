@@ -199,8 +199,6 @@ lwd_detr/
 
 ### 训练过程可视化
 
-以下为基于论文报告指标绘制的训练过程示意曲线：
-
 **LWD-DETR 训练结果**
 
 ![LWD-DETR Results](assets/results_lwd_detr.png)
